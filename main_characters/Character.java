@@ -6,28 +6,44 @@ public abstract class Character {
     protected String name;
     protected int health, maxHealth;
     protected int atack, defense, agility, intellig;
+    protected int mp, maxMp;
     // Sistema de nível e XP
     protected int level, exp, nxtLevelXp;
 
     // Métodos Getter e Setter padrões
     public String getName() {return this.name;}
     public void setName(String name) {this.name = name;}
+
     public int getHealth() {return this.health;}
     public void setHealth(int health) {this.health = health;}
+
     public int getMaxHealth() {return this.maxHealth;}
     public void setMaxHealth(int maxHealth) {this.maxHealth = maxHealth;}
+
     public int getAtack() {return this.atack;}
     public void setAtack(int atack) {this.atack = atack;}
+
     public int getDefense() {return this.defense;}
     public void setDefense(int defense) {this.defense = defense;}
+
     public int getAgility() {return this.agility;}
     public void setAgility(int agility) {this.agility = agility;}
+
     public int getIntellig() {return this.intellig;}
     public void setIntellig(int intellig) {this.intellig = intellig;}
+
+    public int getMp() {return this.mp;}
+    public void setMp(int mp) {this.mp = mp;}
+
+    public int getMaxMp() {return this.maxMp;}
+    public void setMaxMp(int maxMp) {this.maxMp = maxMp;}
+
     public int getLevel() {return this.level;}
     public void setLevel(int level) {this.level = level;}
+
     public int getExp() {return this.exp;}
     public void setExp(int exp) {this.exp = exp;}
+
     public int getNxtLevelXp() {return this.nxtLevelXp;}
     public void setNxtLevelXp(int nxtLevelXp) {this.nxtLevelXp = nxtLevelXp;}
 
@@ -37,6 +53,21 @@ public abstract class Character {
         this.setLevel(1);               // Nível inicial
         this.setExp(0);                   // Experiência inicial
         this.setNxtLevelXp(100);   // Precisa de 100 exp para subir de nível  
+    }
+
+    // Métodos para pegar o tipo de MP e o nome da classe
+    public abstract String getResourceName();
+    public abstract String getClassName();
+
+    // Método para gastar MP (retorna true se conseguir usar)
+    public boolean useMp(int cost){
+        if (this.getMp() >= cost){
+            this.setMp(this.getMp()-cost);
+            return true;
+        } else {
+            System.out.println(this.getName() + " não tem mana o suficiente!");
+            return false;
+        }
     }
 
     // Método para ganho de experiência igual para todas as classes
@@ -60,7 +91,17 @@ public abstract class Character {
     protected abstract void levelUp();
 
     // Getter básicos para exibir o status do personagem
-    public String getStatus(){
-        return this.getName() + " (lvl " + this.getLevel() + ") - Vida: " + this.getHealth() + "/" + this.getMaxHealth() + " | Atq: " + this.getAtack() + " | Def: " + this.getDefense() + " | Agi: " + this.getAgility() + " | Int: " + this.getIntellig();
+    public void getStatus(){
+        System.out.println("========================================================");
+        System.out.println("STATUS DO JOGADOR");
+        System.out.println("--------------------------------------------------------");
+        System.out.println("Nome: " + this.getName() + " | " + this.getClassName());
+        System.out.println("Vida: " + this.getHealth() + " / " + this.getMaxHealth());
+        System.out.println(this.getResourceName() + ": " + this.getMp() + " / " + this.getMaxMp());
+        System.out.println("Ataque: " + this.getAtack());
+        System.out.println("Defesa: " + this.getDefense());
+        System.out.println("Agilidade: " + this.getAgility());
+        System.out.println("Inteligência: " + this.getIntellig());
+        System.out.println("--------------------------------------------------------");
     }
 }
