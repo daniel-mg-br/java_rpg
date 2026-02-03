@@ -1,4 +1,4 @@
-package java_rpg.main_characters;
+package com.javarpg.model.entities;
 
 // Classe filha Assassino, foco em ataque e agilidade
 public class Assassin extends Character {

@@ -1,0 +1,38 @@
+java_rpg/                      <-- Raiz do Projeto
+│
+├── save.json                  <-- (Futuro) Onde o arquivo de save ficará
+├── README.md                  <-- (Opcional) Descrição do projeto
+│
+└── src/                       <-- Código Fonte começa aqui
+    └── com
+        └── javarpg            <-- Pacote base
+            │
+            ├── main           <-- Ponto de entrada
+            │   └── Main.java
+            │
+            ├── model          <-- O "Modelo" de dados (O QUE é o jogo)
+            │   ├── entities   <-- (Antiga "main_characters") Seres vivos
+            │   │   ├── Personagem.java
+            │   │   ├── Guerreiro.java
+            │   │   ├── Mago.java
+            │   │   ├── Inimigo.java
+            │   │   └── ...
+            │   │
+            │   └── items      <-- Objetos inanimados
+            │       ├── Item.java
+            │       ├── Arma.java
+            │       ├── Pocao.java
+            │       └── Inventario.java
+            │
+            ├── world          <-- O ambiente
+            │   ├── Local.java
+            │   ├── Cidade.java
+            │   └── Floresta.java
+            │
+            ├── system         <-- A lógica/cérebro (COMO funciona)
+            │   ├── GameEngine.java  (Loop do jogo)
+            │   ├── SaveManager.java (Salvar/Carregar)
+            │   └── Parser.java      (Ler comandos do jogador)
+            │
+            └── utils          <-- Ferramentas auxiliares
+                └── ConsoleColors.java (Para colorir o texto no terminal)

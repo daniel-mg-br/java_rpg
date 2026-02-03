@@ -1,4 +1,4 @@
-package java_rpg.main_characters;
+package com.javarpg.model.entities;
 
 // Classe filha Arqueiro, foco em agilidade e ataque (à distância)
 public class Archer extends Character{
