@@ -1,4 +1,4 @@
-package java_rpg.main_characters;
+package com.javarpg.model.entities;
 
 // Classe abstrata que serve de molde para as outras classes
 public abstract class Character {

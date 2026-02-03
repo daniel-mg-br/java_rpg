@@ -1,4 +1,4 @@
-package java_rpg.main_characters;
+package com.javarpg.model.entities;
 
 // Classe filha Guerreira: foco em vida e ataque
 public class Warrior extends Character{

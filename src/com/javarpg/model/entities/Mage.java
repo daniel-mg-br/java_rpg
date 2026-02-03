@@ -1,4 +1,4 @@
-package java_rpg.main_characters;
+package com.javarpg.model.entities;
 
 // Classe filha Mago, foco em inteligência
 public class Mage extends Character {
@@ -27,3 +27,4 @@ public class Mage extends Character {
         System.out.println("Seu conhecimento arcano expandiu!");
     }
 }
+
