@@ -1,5 +1,11 @@
 package com.javarpg.model.entities;
 
+import com.javarpg.model.items.Item;
+import com.javarpg.model.items.Equipment;
+import java.util.ArrayList;
+import java.util.List;
+
+
 // Classe abstrata que serve de molde para as outras classes
 public abstract class Character {
     // Atributos protegidos para que os filhos possam acessar
@@ -9,6 +15,11 @@ public abstract class Character {
     protected int mp, maxMp;
     // Sistema de nível e XP
     protected int level, exp, nxtLevelXp;
+
+    // Inventário e equipamentos implementados com listas
+    protected List <Item> inventory = new ArrayList();
+    protected Equipment weapon;
+    protected Equipment armor;
 
     // Métodos Getter e Setter padrões
     public String getName() {return this.name;}
@@ -67,6 +78,37 @@ public abstract class Character {
         } else {
             System.out.println(this.getName() + " não tem mana o suficiente!");
             return false;
+        }
+    }
+
+    public void addItem(Item item) {
+        inventory.add(item);
+        System.out.println("Você pegou: " + item.getItemName());
+    }
+
+    public void equipItem(Equipment newEquipment) {
+        if (newEquipment.getType() == Equipment.Type.WEAPON) {
+            if (this.weapon != null) inventory.add(this.weapon);
+            this.weapon = newEquipment;
+        }
+        else if (newEquipment.getType() == Equipment.Type.ARMOR) {
+            if (this.armor != null) inventory.add(this.armor);
+            this.armor = newEquipment;
+        }
+        inventory.remove(newEquipment);
+    }
+
+    public int getTotalAttack() {
+        this.setAtack(10);
+        int bonusWeapon = (weapon != null) ? weapon.getBuffStat() : 0;
+        return this.getAtack() + bonusWeapon;
+    }
+
+    public void heal(int value) {
+        this.setHealth(this.getHealth() + value);
+
+        if (this.getHealth() > this.getMaxHealth()) {
+            this.setHealth(this.getMaxHealth());
         }
     }
 
