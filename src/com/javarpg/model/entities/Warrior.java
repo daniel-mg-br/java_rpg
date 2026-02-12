@@ -15,9 +15,11 @@ public class Warrior extends Character{
         this.setIntellig(2);
     }
 
+    // Método para definir os nomes específicos da classe e do "tipo" de MP
     @Override public String getResourceName(){return "Energia";}
     @Override public String getClassName() {return "Guerreiro";}
 
+    // Método que define como o personagem melhora os atributos
     @Override protected void levelUp(){
         // Guerreiro ganha mais vida e ataque
         this.setMaxHealth(this.getMaxHealth()+20);
@@ -28,4 +30,9 @@ public class Warrior extends Character{
         // Inteligência não sobe ou muito pouco
         System.out.println("Sua força e resistência aumentaram consideravelmente!");
     }    
+
+    // Método que retorna o dano total do personagem
+    @Override public int calculateDamage() {
+        return this.getEffectiveAttack();
+    }
 }

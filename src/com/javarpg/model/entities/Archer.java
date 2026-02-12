@@ -15,9 +15,11 @@ public class Archer extends Character{
         this.setIntellig(6);
     }
 
+    // Método para definir os nomes específicos da classe e do "tipo" de MP
     @Override public String getResourceName() {return "Foco";}
     @Override public String getClassName() {return "Arqueiro";}
 
+    // Método que define como o personagem melhora os atributos
     @Override protected void levelUp(){
         // Melhora na rapidez e no dano
         this.setMaxHealth(this.getMaxHealth()+12);
@@ -26,5 +28,10 @@ public class Archer extends Character{
         this.setAgility(this.getAgility()+2);
         this.setDefense(this.getDefense()+1);
         System.out.println("Sua mira e reflexos ficaram mais afiados");
+    }
+
+    // Método que retorna o dano total do personagem
+    @Override public int calculateDamage() {
+        return this.getEffectiveAttack();
     }
 }
