@@ -22,9 +22,14 @@ public class Consumable extends Item {
 
     // Polimorfismo do método apply: aqui os items são usados para recuperar vida ou mana do jogador    
     @Override public String apply(Character individual) {
-        if (this.getItemType().equals("Vida")) {
-            //individual.heal(this.getHealValue());
+        if (this.getItemType().equalsIgnoreCase("Vida")) {
+            individual.heal(this.getHealValue());
             return "Você usou " + this.getItemName() + " e curou " + this.getHealValue() + " de HP!";
+        }
+
+        if (this.getItemType().equalsIgnoreCase("Mana")) {
+            individual.restoreMp(this.getHealValue());
+            return "Você usou " + this.getItemName() + " e recuperou " + this.getHealValue() + " de MP!";
         }
         return "Item usado sem efeito...";
     }

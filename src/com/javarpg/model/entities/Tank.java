@@ -15,9 +15,11 @@ public class Tank extends Character {
         this.setIntellig(2);
     }
 
+    // Método para definir os nomes específicos da classe e do "tipo" de MP
     @Override public String getResourceName() {return "Vigor";}
     @Override public String getClassName() {return "Tank";}
 
+    // Método que define como o personagem melhora os atributos
     @Override protected void levelUp(){
         // Foco maior na defesa
         this.setMaxHealth(this.getMaxHealth()+30);
@@ -25,5 +27,10 @@ public class Tank extends Character {
         this.setDefense(this.getDefense()+4);
         this.setAtack(this.getAtack()+1);
         System.out.println("Sua armadura ficou mais forte!");
+    }
+
+    // Método que retorna o dano total do personagem
+    @Override public int calculateDamage() {
+        return this.getEffectiveAttack();
     }
 }

@@ -6,7 +6,7 @@ public class Assassin extends Character {
         super(name);
         // Status iniciais do Assassino
         this.setMaxHealth(90);
-        this.setMaxHealth(this.getMaxHealth());
+        this.setHealth(this.getMaxHealth());
         this.setMaxMp(45);
         this.setMp(this.getMaxMp());
         this.setAtack(12);
@@ -15,9 +15,11 @@ public class Assassin extends Character {
         this.setIntellig(5);
     }
 
+    // Método para definir os nomes específicos da classe e do "tipo" de MP
     @Override public String getResourceName() {return "Stamina";}
     @Override public String getClassName() {return "Assassino";}
 
+    // Método que define como o personagem melhora os atributos
     @Override protected void levelUp(){
         // Foco total em dano e velocidade
         this.setMaxHealth(this.getMaxHealth()+10);
@@ -26,5 +28,10 @@ public class Assassin extends Character {
         this.setAgility(this.getAgility()+3);
         this.setDefense(this.getDefense()+1);
         System.out.println("Você ficou mais letal e rápido!");
+    }
+
+    // Método que retorna o dano total do personagem
+    @Override public int calculateDamage() {
+        return this.getEffectiveAttack();
     }
 }

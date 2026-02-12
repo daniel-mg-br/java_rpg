@@ -1,7 +1,9 @@
 package com.javarpg.model.entities;
 
+// Importando os outros diretórios do projeto
 import com.javarpg.model.items.Item;
 import com.javarpg.model.items.Equipment;
+// Importando as estruturas de dados necessárias
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +18,13 @@ public abstract class Character {
     // Sistema de nível e XP
     protected int level, exp, nxtLevelXp;
 
-    // Inventário e equipamentos implementados com listas
-    protected List <Item> inventory = new ArrayList();
+    // Inventário implementado com uma lista
+    protected List <Item> inventory = new ArrayList<>();
+
+    // Itens equipáveis: arma, armadura e capacete
     protected Equipment weapon;
     protected Equipment armor;
+    protected Equipment helmet;
 
     // Métodos Getter e Setter padrões
     public String getName() {return this.name;}
@@ -81,34 +86,129 @@ public abstract class Character {
         }
     }
 
+    // Adicionando um item ao inventário (a lista)
     public void addItem(Item item) {
         inventory.add(item);
         System.out.println("Você pegou: " + item.getItemName());
     }
 
+    // Método para equipar itens equipáveis
     public void equipItem(Equipment newEquipment) {
+        // Caso o item seja uma arma
         if (newEquipment.getType() == Equipment.Type.WEAPON) {
             if (this.weapon != null) inventory.add(this.weapon);
             this.weapon = newEquipment;
         }
+        // Caso o item seja uma armadura
         else if (newEquipment.getType() == Equipment.Type.ARMOR) {
             if (this.armor != null) inventory.add(this.armor);
             this.armor = newEquipment;
         }
+        // Caso o item seja um capacete
+        else if (newEquipment.getType() == Equipment.Type.HELMET) {
+            if (this.helmet != null) inventory.add(this.helmet);
+            this.helmet = newEquipment;
+        }
+        // Depois que atribuímos o valor para weapon/armor/helmet, tiramos o item do inventário
         inventory.remove(newEquipment);
     }
 
-    public int getTotalAttack() {
-        this.setAtack(10);
-        int bonusWeapon = (weapon != null) ? weapon.getBuffStat() : 0;
-        return this.getAtack() + bonusWeapon;
+    // Calcula o ataque total do jogador após o buff do item equipável
+    public int getEffectiveAttack() {
+        int total = this.getAtack();
+
+        // Confere se o atributo melhorado é o ATAQUE
+        if (this.weapon != null && this.weapon.getStatBonus() == Equipment.StatBonus.ATTACK) {
+            total += this.weapon.getBuffStat();
+        }
+        return total;
     }
 
+    // Calcula a defesa total do jogador após o buff do item equipável
+    public int getEffectiveDefense() {
+        int total = this.getDefense();
+
+        // Confere se o atributo melhorado é a DEFESA
+        if (this.armor != null && this.helmet.getStatBonus() == Equipment.StatBonus.DEFENSE) {
+            total += this.armor.getBuffStat();
+        }
+        // Mesma lógica para o capacete
+        if (this.helmet != null && this.helmet.getStatBonus() == Equipment.StatBonus.DEFENSE) {
+            total += this.helmet.getBuffStat();
+        }
+        return total;
+    }
+
+    // Calcula a inteligência total do jogador após o buff do item equipável
+    public int getEffectiveIntelligence() {
+        int total = this.getIntellig();
+        
+        // Confere se o atributo melhorado é a INTELIGÊNCIA
+        if (this.weapon != null && this.weapon.getStatBonus() == Equipment.StatBonus.INTELLIGENCE) {
+            total += this.weapon.getBuffStat();
+        }
+        return total;
+    }
+
+    // Calcula a agilidade total do jogador após o buff do item equipável
+    public int getEffectiveAgility() {
+        int total = this.getAgility();
+
+        // Confere se o atributo melhorado é a AGILIDADE
+        if (this.weapon != null && this.weapon.getStatBonus() == Equipment.StatBonus.AGILITY) {
+            total += this.weapon.getBuffStat();
+        }
+        // Tanto armas quanto armaduras podem garantir uma melhora na agilidade
+        if (this.armor != null && this.armor.getStatBonus() == Equipment.StatBonus.AGILITY) {
+            total += this.armor.getBuffStat();
+        }
+
+        return total;
+    }
+
+    // Método abstrato para calcular o dano total do personagem
+    public abstract int calculateDamage();
+
+    // Método para o personagem receber o dano
+    public void receiveDamage(int damage) {
+        // Calcula primeiro o dano efetivo, descontando a defesa
+        int effectiveDefense = this.getEffectiveDefense();
+        int damageTaken = damage - effectiveDefense;
+
+        // Garante que o dano seja negativo
+        if (damageTaken <= 0) {
+            damageTaken = 1;
+            System.out.println(this.getName() + " recebeu " + damageTaken + " de dano!");
+        } else {
+            System.out.println(this.getName() + " recebeu " + damageTaken + " de dano!");
+        }
+
+        // Aplicando o dano
+        this.setHealth(this.getHealth() - damageTaken);
+
+        // Evita vida negativa
+        if (this.getHealth() < 0) {
+            this.setHealth(0);
+        }
+    }
+
+    // Método para curar a vida do personagem
     public void heal(int value) {
         this.setHealth(this.getHealth() + value);
 
+        // Caso o personagem ganhe mais vida do que consegue, fica com o máximo de vida
         if (this.getHealth() > this.getMaxHealth()) {
             this.setHealth(this.getMaxHealth());
+        }
+    }
+
+    // Método para curar o MP do personagem
+    public void restoreMp(int value) {
+        this.setMp(this.getMp() + value);
+
+        // Caso o personagem ganhe mais MP do que consegue, fica com o máximo de MP
+        if (this.getMp() > this.getMaxMp()) {
+            this.setMp(this.getMaxMp());
         }
     }
 
@@ -140,10 +240,10 @@ public abstract class Character {
         System.out.println("Nome: " + this.getName() + " | " + this.getClassName());
         System.out.println("Vida: " + this.getHealth() + " / " + this.getMaxHealth());
         System.out.println(this.getResourceName() + ": " + this.getMp() + " / " + this.getMaxMp());
-        System.out.println("Ataque: " + this.getAtack());
-        System.out.println("Defesa: " + this.getDefense());
-        System.out.println("Agilidade: " + this.getAgility());
-        System.out.println("Inteligência: " + this.getIntellig());
+        System.out.println("Ataque: " + this.getEffectiveAttack());
+        System.out.println("Defesa: " + this.getEffectiveDefense());
+        System.out.println("Agilidade: " + this.getEffectiveAgility());
+        System.out.println("Inteligência: " + this.getEffectiveIntelligence());
         System.out.println("--------------------------------------------------------");
     }
 }
