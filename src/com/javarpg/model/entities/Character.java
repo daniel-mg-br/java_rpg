@@ -90,15 +90,22 @@ public abstract class Character {
         }
     }
 
-    // Adicionando um item ao inventário (a lista)
+    // Método para adicionar itens ao inventário, usando sobrecarga de método
     public boolean addItem(Item item) {
-        // Verifica se tem espaço antes de colocar
+        return this.addItem(item, false);
+    }
+
+    // O método principal, a sobrecarga é usada por questões de UX
+    public boolean addItem(Item item, boolean silent) {
+        // Verifica se tem espaço no inventário
         if (inventory.size() < maxInventorySize) {
             inventory.add(item);
-            System.out.println("Você pegou: " + item.getItemName());
+            
+            // Só imprime a mensagem se não for silencioso (pegou do chão)
+            if (!silent) System.out.println("Você pegou: " + item.getItemName());
             return true;
         } else {
-            System.out.println("Inventário cheio!");
+            if (!silent) System.out.println("Inventário cheio!");
             return false;
         }
     }
@@ -162,10 +169,10 @@ public abstract class Character {
         }
 
         // Tenta guardar na mochila, se estiver cheia, não é retirado
-        if (this.addItem(itemToRemove)) {
+        if (this.addItem(itemToRemove, true)) {
             if (type == Equipment.Type.WEAPON) this.weapon = null;
-            if (type == Equipment.Type.ARMOR) this.armor = null;
-            if (type == Equipment.Type.HELMET) this.helmet = null;
+            else if (type == Equipment.Type.ARMOR) this.armor = null;
+            else if (type == Equipment.Type.HELMET) this.helmet = null;
 
             System.out.println("Você desequipou: " + itemToRemove.getItemName());
         } else {
@@ -173,15 +180,14 @@ public abstract class Character {
         }
     }
 
-    // Método para usar itens no geral, chamando os métodos dos equipáveis e consumíveis
+    // Método para usar itens no geral, chamando os métodos dos equipáveis e consumíveis 
     public void useItem(Item item) {
-        // Se for Equipamento, chama o método de equipar
-        if (item instanceof Equipment) {
-            this.equipItem((Equipment) item);
-        } 
-        // Se for consumível, aplica o efeito e remove da mochila
-        else  if (item instanceof Consumable) {
-            System.out.println(item.apply(this));
+        // O item executa o próprio efeito dele (recuperar HP/MP ou equipar)
+        String mensagem = item.apply(this);
+        System.out.println(mensagem);
+
+        // Os consumíveis precisam ser removidos depois de usados
+        if (item instanceof Consumable) {
             inventory.remove(item);
         }
     }
@@ -202,7 +208,7 @@ public abstract class Character {
         int total = this.getDefense();
 
         // Confere se o atributo melhorado é a DEFESA
-        if (this.armor != null && this.helmet.getStatBonus() == Equipment.StatBonus.DEFENSE) {
+        if (this.armor != null && this.armor.getStatBonus() == Equipment.StatBonus.DEFENSE) {
             total += this.armor.getBuffStat();
         }
         // Mesma lógica para o capacete
@@ -249,9 +255,9 @@ public abstract class Character {
         int damageTaken = damage - effectiveDefense;
 
         // Garante que o dano seja negativo
-        if (damageTaken <= 0) {
+        if (damageTaken <= 1) {
             damageTaken = 1;
-            System.out.println(this.getName() + " recebeu " + damageTaken + " de dano!");
+            System.out.println("A armadura de " + this.getName() + " absorveu muito dano!");
         } else {
             System.out.println(this.getName() + " recebeu " + damageTaken + " de dano!");
         }
@@ -292,9 +298,9 @@ public abstract class Character {
 
         // Verifica se subiu de nível (pode subir mais de um nível de uma vez)
         while (this.getExp() >= this.getNxtLevelXp()){
-            this.setExp(this.getExp() - this.getNxtLevelXp());  // Remove o exp usado
+            this.setExp(this.getExp() - xpWon);
             this.setLevel(this.getLevel()+1);
-            this.setNxtLevelXp(this.getNxtLevelXp()+50);        // Dificulta para o próximo nível
+            this.setNxtLevelXp(this.getNxtLevelXp()+50); // Dificulta para o próximo nível
             // Cada classe melhora atributos de um jeito diferente (Polimorfismo)
             levelUp();
             this.setHealth(this.getMaxHealth());    // Cura o personagem ao upar
