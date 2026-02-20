@@ -32,7 +32,9 @@ public class Equipment extends Item {
 
     //Polimorfismo do método aplicar: aqui os itens são equipados para melhorar algum atributo do jogador
     @Override public String apply(Character individual) {
-        individual.equipItem(this);
-        return "Você equipou " + this.getItemName();
+        boolean success = individual.equipItem(this);
+        
+        if (success) return "Você equipou " + this.getItemName();
+        else return "";
     }
 }

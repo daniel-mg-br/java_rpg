@@ -122,7 +122,7 @@ public abstract class Character {
     }
 
     // Método para equipar itens equipáveis
-    public void equipItem(Equipment newEquipment) {
+    public boolean equipItem(Equipment newEquipment) {
         // Se o item novo está na mochila, não ocupa espaço extra
         inventory.remove(newEquipment);
         Equipment oldItem = null;
@@ -142,7 +142,7 @@ public abstract class Character {
                 // Se não cabe o item antigo, cancela a operação
                 System.out.println("Iventário cheio! Não dá para trocar equipamento!");
                 inventory.add(newEquipment);
-                return; // Sai do método sem equipar
+                return false; // Sai do método sem equipar
             }
         }
 
@@ -151,7 +151,7 @@ public abstract class Character {
         else if (newEquipment.getType() == Equipment.Type.ARMOR) this.armor = newEquipment;
         else if (newEquipment.getType() == Equipment.Type.HELMET) this.helmet = newEquipment;
 
-        System.out.println("Você equipou: " + newEquipment.getItemName());
+        return true;
     }
 
     public void unequipItem(Equipment.Type type) {
