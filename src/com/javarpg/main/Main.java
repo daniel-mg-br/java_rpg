@@ -1,50 +1,43 @@
 package com.javarpg.main;
 import com.javarpg.model.entities.*;
 import com.javarpg.model.items.*;
+import com.javarpg.system.BattleManager;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("===== INICIANDO O AMBIENTE DE TESTES =====\n");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("=== INICIANDO O RPG ===");
 
-        Warrior guerreiro = new Warrior("Arthur");
-        System.out.println("Guerreiro criado!");
-        guerreiro.getStatus();
+        // 1. Criando o Herói
+        Warrior heroi = new Warrior("Kael");
+        System.out.println("Herói criado: " + heroi.getName());
 
-        Equipment espadaFerro = new Equipment("Espada de Ferro", 50, 15, Equipment.Type.WEAPON, Equipment.StatBonus.ATTACK);
+        // 2. Dando equipamentos iniciais para ele não morrer fácil
+        Equipment espada = new Equipment("Espada Enferrujada", 10, 5, Equipment.Type.WEAPON, Equipment.StatBonus.ATTACK);
+        Equipment armadura = new Equipment("Túnica Velha", 10, 3, Equipment.Type.ARMOR, Equipment.StatBonus.DEFENSE);
+        Consumable pocao = new Consumable("Poção Menor", 5, 20, "Vida");
 
-        Equipment capaceteCouro = new Equipment("Capacete de Couro", 30, 5, Equipment.Type.HELMET, Equipment.StatBonus.DEFENSE);
+        heroi.addItem(espada);
+        heroi.addItem(armadura);
+        heroi.addItem(pocao);
 
-        Consumable pocaoVida = new Consumable("Poção de Vida Pequena", 10, 40, "Vida");
+        heroi.printInventory();
+        
+        // Equipando automaticamente para o teste
+        heroi.useItem(espada);
+        heroi.useItem(armadura);
 
-        System.out.println("\n----- Testando o Inventário -----\n");
-        guerreiro.addItem(espadaFerro);
-        guerreiro.addItem(capaceteCouro);
-        guerreiro.addItem(pocaoVida);
-        guerreiro.addItem(pocaoVida);
-        guerreiro.printInventory();
+        // 3. Criando o Monstro (Nome, HP, Atk, Def, XP, Gold)
+        // Slime: 40 HP, 8 Atk, 1 Def, 50 XP, 10 Gold
+        Enemy monstro = new Enemy("Slime Viscoso", 40, 8, 1, 50, 10);
 
-        System.out.println("\n----- Testando Equipamentos e Buffs");
-        guerreiro.useItem(espadaFerro);
-        guerreiro.useItem(capaceteCouro);
-        guerreiro.getStatus();
-        guerreiro.printInventory();
+        // 4. INICIANDO A BATALHA
+        // Aqui acontece a mágica: passamos um 'Warrior' onde pede 'Character'
+        BattleManager.startBattle(heroi, monstro, scanner);
 
-        System.out.println("\n----- Simulando um combate -----");
-        System.out.println("Ataque de monstro com 20 de dano!");
-        guerreiro.receiveDamage(20);
-
-        System.out.println("\n----- Testando consumíveis");
-        System.out.println("HP atual: " + guerreiro.getHealth());
-        guerreiro.useItem(pocaoVida);
-        System.out.println("HP após poção: " + guerreiro.getHealth());
-
-        guerreiro.printInventory();
-
-        System.out.println("\n----- Testando o desequipar -----");
-        guerreiro.unequipItem(Equipment.Type.WEAPON);
-
-        System.err.println("\n----- STATUS FINAL -----");
-        guerreiro.getStatus();
-        guerreiro.printInventory();
+        // 5. Pós-Batalha
+        heroi.getStatus();
+        scanner.close();
     }
 }

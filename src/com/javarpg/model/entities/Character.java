@@ -20,6 +20,8 @@ public abstract class Character {
     protected int mp, maxMp;
     // Sistema de nível e XP
     protected int level, exp, nxtLevelXp;
+    // Ouro que o personagem carrega
+    protected int gold;
 
     // Inventário implementado com uma lista, junto de um variável para controlar o espaço
     protected List <Item> inventory = new ArrayList<>();
@@ -67,12 +69,16 @@ public abstract class Character {
     public int getNxtLevelXp() {return this.nxtLevelXp;}
     public void setNxtLevelXp(int nxtLevelXp) {this.nxtLevelXp = nxtLevelXp;}
 
+    public int getGold() {return this.gold;}
+    public void setGold(int gold) {this.gold = gold;}
+
     // Método Construtor
     public Character (String name){
         this.setName(name);
         this.setLevel(1);               // Nível inicial
         this.setExp(0);                   // Experiência inicial
         this.setNxtLevelXp(100);   // Precisa de 100 exp para subir de nível  
+        this.setGold(0);
     }
 
     // Métodos para pegar o tipo de MP e o nome da classe
@@ -293,18 +299,21 @@ public abstract class Character {
 
     // Método para ganho de experiência igual para todas as classes
     public void wonExperience(int xpWon){
-        this.setExp(xpWon);
-        System.out.println(this.getName() + " ganhou " + xpWon + " de experiência");
+        // Somar a nova experiência à que o jogador já possuía  
+        this.setExp(this.getExp() + xpWon);
+        System.out.println(this.getName() + " ganhou " + xpWon + " de experiência!");
 
-        // Verifica se subiu de nível (pode subir mais de um nível de uma vez)
-        while (this.getExp() >= this.getNxtLevelXp()){
-            this.setExp(this.getExp() - xpWon);
-            this.setLevel(this.getLevel()+1);
-            this.setNxtLevelXp(this.getNxtLevelXp()+50); // Dificulta para o próximo nível
-            // Cada classe melhora atributos de um jeito diferente (Polimorfismo)
+        // Verifica se subiu de nível (pode subir mais de um por vez)
+        while (this.getExp() >= this.getNxtLevelXp()) {
+            // Subtrair a experiência necessária para o nível
+            this.setExp(this.getExp() - this.getNxtLevelXp());
+
+            this.setLevel(this.getLevel() + 1);
+            this.setNxtLevelXp(this.getNxtLevelXp() + 50);  // Dificulta para o próximo nível
             levelUp();
-            this.setHealth(this.getMaxHealth());    // Cura o personagem ao upar
-            System.out.println("Parabéns! " + this.getName() + " subiu de nível!");
+
+            this.setHealth(this.getMaxHealth());    // Cura o personagem ao subir de nível
+            System.out.println("Parabéns " + this.getName() + " subiu para o nível " + this.getLevel() + "!");
         }
     }
 
