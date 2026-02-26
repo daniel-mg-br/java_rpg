@@ -3,12 +3,15 @@ package com.javarpg.system;
 import com.javarpg.model.entities.Character;
 import com.javarpg.model.entities.Enemy;
 import com.javarpg.model.items.*;
+import com.javarpg.utils.*;
 import java.util.Scanner;
 
 public class BattleManager {
     // Método esttático: possível chamá-lo de qualquer lugar
     public static void startBattle(Character player, Enemy enemy, Scanner scanner) {
+        ConsoleUtils.clearScreen();
         System.out.println("\n UM " + enemy.getName().toUpperCase() + " APARECEU!\n");
+        ConsoleUtils.pressEnter();
 
         // Loop principal: combate acontece até um dos dois morrer
         while (player.getHealth() > 0 && enemy.getHealth() > 0) {
@@ -58,6 +61,8 @@ public class BattleManager {
 
     // O turno do jogador, retorna true se conseguir fugir e false se não conseguir
     private static boolean playerTurn(Character player, Enemy enemy, Scanner scanner) {
+        // Limpa a tela
+        ConsoleUtils.clearScreen();
         // Interface do usuário
         System.out.println("----- SEU TURNO -----");
         System.out.println("HP: " + player.getHealth() + "/" + player.getMaxHealth());
@@ -145,5 +150,6 @@ public class BattleManager {
             int damage = enemy.calculateDamage();
             player.receiveDamage(damage);
         }
+        ConsoleUtils.pressEnter();
     }
 }
