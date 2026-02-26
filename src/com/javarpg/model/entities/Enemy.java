@@ -27,4 +27,18 @@ public class Enemy extends Character{
     @Override public int calculateDamage() {
         return this.getAtack();
     }
+
+    // Polimorfismo da habilidade especial: chance de dar um ataque mais forte
+    @Override public boolean useSpecialHability(Character target) {
+        int cost = 10;  // Custo do ataque
+        
+        if (this.useMp(cost)) {
+            System.out.println("\n" + this.getName() + " prepara um ATAQUE FURIOSO!");
+
+            int damage = (int)(this.getEffectiveAttack() * 1.8);
+            target.receiveDamage(damage);
+            return true;
+        }
+        return false; 
+    }
 }

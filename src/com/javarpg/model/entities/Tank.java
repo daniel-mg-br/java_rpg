@@ -33,4 +33,22 @@ public class Tank extends Character {
     @Override public int calculateDamage() {
         return this.getEffectiveAttack();
     }
+
+    // Polimorfismo da habilidade especial: um ataque levemente mais forte que buffa a defesa
+    @Override public boolean useSpecialHability(Character target) {
+        int cost = 10;  // Custo de ataque
+
+        if (this.useMp(cost)) {
+            System.out.println("\n" + this.getName() + " usou uma INVESTIDA COM ESCUDO!");
+
+            int damage = (int)(this.getEffectiveAttack() + (this.getEffectiveDefense()*1.2));
+            target.receiveDamage(damage);   // Dano baseado na defesa
+
+            this.setBattleDefenseBuff(this.getBattleDefenseBuff()+3);
+            System.out.println("Sua postura defensiva aumentou sua defesa base em +3!");
+            this.setDefense(this.getDefense() + 3);     // Buff na defesa
+            return true;
+        }
+        return false; 
+    }
 }

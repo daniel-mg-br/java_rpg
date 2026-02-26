@@ -32,6 +32,10 @@ public abstract class Character {
     protected Equipment armor;
     protected Equipment helmet;
 
+    // Atributos para buffs temporários em batalhas
+    protected int battleDefenseBuff = 0;
+    protected int battleAttackBuff = 0;
+
     // Métodos Getter e Setter padrões
     public String getName() {return this.name;}
     public void setName(String name) {this.name = name;}
@@ -71,6 +75,12 @@ public abstract class Character {
 
     public int getGold() {return this.gold;}
     public void setGold(int gold) {this.gold = gold;}
+
+    public int getBattleDefenseBuff() {return this.battleDefenseBuff;}
+    public void setBattleDefenseBuff(int battleDefenseBuff) {this.battleDefenseBuff = battleDefenseBuff;}
+
+    public int getBattleAttackBuff() {return this.battleAttackBuff;}
+    public void setBattleAttackBuff(int battleAttackBuff) {this.battleAttackBuff = battleAttackBuff;}
 
     // Método Construtor
     public Character (String name){
@@ -206,6 +216,8 @@ public abstract class Character {
         if (this.weapon != null && this.weapon.getStatBonus() == Equipment.StatBonus.ATTACK) {
             total += this.weapon.getBuffStat();
         }
+
+        total += this.getBattleAttackBuff();
         return total;
     }
 
@@ -221,6 +233,8 @@ public abstract class Character {
         if (this.helmet != null && this.helmet.getStatBonus() == Equipment.StatBonus.DEFENSE) {
             total += this.helmet.getBuffStat();
         }
+
+        total += this.getBattleAttackBuff();
         return total;
     }
 
@@ -253,6 +267,9 @@ public abstract class Character {
 
     // Método abstrato para calcular o dano total do personagem
     public abstract int calculateDamage();
+
+    // Método abstrato: retorna true se conseguir usar a habilidade especial
+    public abstract boolean useSpecialHability(Character target);
 
     // Método para o personagem receber o dano
     public void receiveDamage(int damage) {
@@ -297,6 +314,12 @@ public abstract class Character {
         }
     }
 
+    // Método para zerar os buffs temporários
+    public void resetBuffs() {
+        this.setBattleAttackBuff(0);
+        this.setBattleDefenseBuff(0);
+    }
+
     // Método para ganho de experiência igual para todas as classes
     public void wonExperience(int xpWon){
         // Somar a nova experiência à que o jogador já possuía  
@@ -333,6 +356,11 @@ public abstract class Character {
         System.out.println("Agilidade: " + this.getEffectiveAgility());
         System.out.println("Inteligência: " + this.getEffectiveIntelligence());
         System.out.println("--------------------------------------------------------");
+    }
+
+    // Método que retorna o inventário do jogador
+    public List <Item> getInventory() {
+        return this.inventory;
     }
 
     // Método para mostrar o inventário para o usuário
