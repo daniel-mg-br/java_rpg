@@ -33,5 +33,19 @@ public class Mage extends Character {
     @Override public int calculateDamage() {
         return this.getEffectiveIntelligence();
     }
+
+    // Polimorfismo da habilidade especial: ataque com o triplo de dano
+    @Override public boolean useSpecialHability(Character target) {
+        int cost = 20;  // Custo da habilidade
+
+        if (this.useMp(cost)) {
+            System.out.println("\n" + this.getName() + " conjura BOLA DE FOGO!");
+
+            int damage = this.getEffectiveIntelligence() * 3;   // Triplo de dano
+            target.receiveDamage(damage);
+            return true;
+        }
+        return false; 
+    }
 }
 

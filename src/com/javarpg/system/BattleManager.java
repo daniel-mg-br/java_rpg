@@ -2,6 +2,7 @@ package com.javarpg.system;
 
 import com.javarpg.model.entities.Character;
 import com.javarpg.model.entities.Enemy;
+import com.javarpg.model.items.*;
 import java.util.Scanner;
 
 public class BattleManager {
@@ -44,9 +45,15 @@ public class BattleManager {
         if (player.getHealth() > 0) {
             System.out.println("\nVITÓRIA! Você derrotou o " + enemy.getName() + "!");
             player.wonExperience(enemy.getNxtLevelXp());
+
+            player.setGold(player.getGold() + enemy.getGold());
+            System.out.println("Você ganhou " + enemy.getGold() + " de ouro!");
         } else {
             System.out.println("\nGAME OVER... O " + enemy.getName() + " derrotou você!");
         }
+
+        player.resetBuffs();
+        enemy.resetBuffs();
     }
 
     // O turno do jogador, retorna true se conseguir fugir e false se não conseguir
@@ -60,7 +67,8 @@ public class BattleManager {
         System.out.println("----- Escolha sua ação: -----");
         System.out.println("[1] Atacar");
         System.out.println("[2] Usar Item");
-        System.out.println("[3] Fugir");
+        System.out.println("[3] Habilidade Especial");
+        System.out.println("[4] Fugir");
         System.out.print("Sua escolha: ");
 
         // Lendo a escolha do jogador
@@ -72,10 +80,43 @@ public class BattleManager {
             enemy.receiveDamage(damage);
         }
         else if (choice == 2) { // Escolheu usar um item
-            System.out.println("\nAbrindo mochila...");
-            System.out.println("Perdeu o turno procurando nada!");
+            if (player.getInventory().isEmpty()) {
+                System.out.println("Sua mochila está vazia! Perdeu o turno!");
+            } else {
+                System.out.println("----- MOCHILA -----");
+                // Lista os itens com índice visual
+                for (int i = 0; i < player.getInventory().size(); i++) {
+                    System.out.println("[" + (i+1) + "] " + player.getInventory().get(i).getItemName());
+                }
+
+                System.out.println("Escolha o número do item (ou 0 para cancelar): ");
+                int itemChoice = scanner.nextInt();
+
+                if (itemChoice > 0 && itemChoice <= player.getInventory().size()) {
+                    // Pega o item escolhido
+                    Item chosenItem = player.getInventory().get(itemChoice-1);
+                    player.useItem(chosenItem);
+                } 
+                else if (itemChoice == 0) {
+                    System.out.println("Você fechou a mochila!");
+                    // Se cancelar, chamamos o turno de novo, ele não perde a vez
+                    return playerTurn(player, enemy, scanner);
+                } 
+                else {
+                    System.out.println("Item inválido! Perdeu o turno!");
+                }
+            }
         }
-        else if (choice == 3) { // Escolheu tentar fugir
+        else if (choice == 3) {
+            boolean success = player.useSpecialHability(enemy);
+
+            if (!success) {
+                // Se retornou false (não tem MP), não perde o turno
+                System.out.println("Escolha outra ação!");
+                return playerTurn(player, enemy, scanner);
+            }   
+        }
+        else if (choice == 4) { // Escolheu tentar fugir
             System.out.println("\nVocê tenta fugir...");
 
             // Chance de fuga baseada na agilidade: 50% de chance + bônus se for mais rápido
@@ -95,9 +136,14 @@ public class BattleManager {
     // O turno do inimigo
     public static void enemyTurn(Enemy enemy, Character player) {
         System.out.println("\n----- TURNO DO INIMIGO -----");
-        System.out.println("O " + enemy.getName() + " avança contra você!");
         
-        int damage = enemy.calculateDamage();
-        player.receiveDamage(damage);
+        // Math.random() gera um número entre 0 e 0.99
+        if (Math.random() < 0.4 && enemy.getMp() >= 10) {
+            enemy.useSpecialHability(player);
+        } else {
+            System.out.println("O " + enemy.getName() + " avança contra você!");
+            int damage = enemy.calculateDamage();
+            player.receiveDamage(damage);
+        }
     }
 }

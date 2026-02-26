@@ -34,4 +34,18 @@ public class Assassin extends Character {
     @Override public int calculateDamage() {
         return this.getEffectiveAttack();
     }
+
+    // Polimorfismo da habilidade especial: dano baseado puramente na agilidade
+    @Override public boolean useSpecialHability(Character target) {
+        int cost = 20;  // Custo do ataque
+        
+        if (this.useMp(cost)) {
+            System.out.println("\n" + this.getName() + " usa um GOLPE DAS SOMBRAS!");
+
+            int damage = this.getEffectiveAgility() * 3; // Influência exclusiva
+            target.receiveDamage(damage);
+            return true;
+        }
+        return false; 
+    }
 }

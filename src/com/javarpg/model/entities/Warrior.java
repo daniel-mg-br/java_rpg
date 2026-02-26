@@ -35,4 +35,19 @@ public class Warrior extends Character{
     @Override public int calculateDamage() {
         return this.getEffectiveAttack();
     }
+
+    // Polimorfismo da habilidade especial: ataque com o dobro de dano
+    @Override public boolean useSpecialHability(Character target) {
+        int cost = 15; // Custo do ataque
+
+        // O método useMp já verifica se tem Mp e subtrai
+        if (this.useMp(cost)) {
+            System.out.println("\n" + this.getName() + " usa GOLPE DEMOLIDOR!");
+
+            int damage = this.getEffectiveAttack() * 2; // Dobro de dano normal
+            target.receiveDamage(damage);
+            return true;
+        }
+        return false; // Não tinha energia o suficiente
+    }
 }

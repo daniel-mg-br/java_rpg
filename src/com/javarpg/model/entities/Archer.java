@@ -34,4 +34,19 @@ public class Archer extends Character{
     @Override public int calculateDamage() {
         return this.getEffectiveAttack();
     }
+
+    // Polimorfismo da habilidade especial: ataque levemente mais forte baseado na agilidade
+    @Override public boolean useSpecialHability(Character target) {
+        int cost = 15;  // Custo do ataque
+
+        if (this.useMp(cost)) {
+            System.out.println("\n" + this.getName() + " dispara um TIRO PENETRANTE!");
+
+            int damage = (int)((this.getEffectiveAttack() * 1.5) + this.getEffectiveAgility()); // Calculo do dano baseado também na agilidade
+
+            target.receiveDamage(damage);
+            return true;
+        }
+        return false; 
+    }
 }
