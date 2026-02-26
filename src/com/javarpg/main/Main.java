@@ -2,6 +2,7 @@ package com.javarpg.main;
 import com.javarpg.model.entities.*;
 import com.javarpg.model.items.*;
 import com.javarpg.system.BattleManager;
+import com.javarpg.utils.*;
 import java.util.Scanner;
 
 public class Main {
@@ -23,6 +24,7 @@ public class Main {
         heroi.addItem(pocao);
 
         heroi.printInventory();
+        ConsoleUtils.pressEnter();
         
         // Equipando automaticamente para o teste
         heroi.useItem(espada);
@@ -35,6 +37,7 @@ public class Main {
         // 4. INICIANDO A BATALHA
         // Aqui acontece a mágica: passamos um 'Warrior' onde pede 'Character'
         BattleManager.startBattle(heroi, monstro, scanner);
+        ConsoleUtils.pressEnter();
 
         // 5. Pós-Batalha
         heroi.getStatus();
