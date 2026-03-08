@@ -1,5 +1,6 @@
 package com.javarpg.world;
 import com.javarpg.model.entities.Character;
+import com.javarpg.model.entities.Enemy;
 import com.javarpg.model.items.Item;
 import com.javarpg.utils.ConsoleUtils;
 
@@ -47,11 +48,9 @@ public class City extends Location {
 
             if (choice == 1) {  // Loja para comprar e vender itens
                 visitShop(player, scanner);
-                ConsoleUtils.pressEnter();
             }
             else if (choice == 2) { // Treino para ganho de XP mínimo
-                System.out.println("O boneco de palha está sendo costurado! Volte mais tarde.");
-                ConsoleUtils.pressEnter();
+                trainingArea(player, scanner);
             }
             else if (choice == 3) { // Local para recuperar vida e MP
                 System.out.println("Você aluga um quarto aconchegante e descansa profundamente...");
@@ -196,4 +195,78 @@ public class City extends Location {
             ConsoleUtils.pressEnter();
         }
     }
+
+    // Método para a área de treinamento
+    private void trainingArea(Character player, Scanner scanner) {
+        System.out.println("\n===== ÁREA DE TREINAMENTO =====");
+        System.out.println("Um velho boneco de palha cheio de remendos está ficando no centro do pátio");
+        System.out.println("Aventureiro: Vamos lá! Se você bater forte talvez seja reconhecido!");
+
+        // Alvo imortal para receber o dano
+        Enemy doll = new Enemy("Boneco de palha", 9999, 0, 0, 0, 0);
+
+        int minDamage = 50;     // Cota de dano necessária para ganhar o XP
+        int accumDamage = 0;    // Dano acumulado total
+
+        while (true) {
+            ConsoleUtils.clearScreen(); // Limpa a tela a cada turno
+            System.out.println("===== ÁREA DE TREINAMENTO =====");
+            System.out.println("HP: " + player.getHealth() + "/" + player.getResourceName() + ": " + player.getMp());
+
+            // Mostra a barra de vida do boneco
+            System.out.println("Boneco de Palha: [" + accumDamage + "/" + minDamage + "]");
+            System.out.println("------------------------------------------");
+
+            System.out.println("[1] Ataque básico");
+            System.out.println("[2] Testar habilidade especial");
+            System.out.println("[0] Voltar para a praça");
+            System.out.println("------------------------------------------");
+
+            System.out.print("Sua escolha: ");
+            int choice = scanner.nextInt();
+
+            if (choice == 1) {
+                int damage = player.calculateDamage();
+                System.out.println("\nVocê golpeia o boneco, causando " + damage + " de dano!");
+                accumDamage += damage;  // Soma o dano da cota
+            }
+            else if (choice == 2) {
+                int preHealth = doll.getHealth();
+                boolean success = player.useSpecialHability(doll);
+
+                if (success) {
+                    int damageDealt = preHealth - doll.getHealth();
+                    System.out.println("O boneco balança violentamente e recebe " + damageDealt + " de dano!");
+
+                    accumDamage += damageDealt;     // Soma o dano da cota
+                    doll.setHealth(9999);   // Reseta a vida do boneco
+                }
+                else {
+                    System.out.println("Você está exausto demais para usar a habilidade!");
+                }
+            }
+            else if (choice == 0) {
+                System.out.println("Você guarda sua arma e sai da área de treinamento");
+                ConsoleUtils.pressEnter();
+                return;
+            }
+            else {
+                System.out.println("Opção inválida!");
+            }
+
+            // Verificando se a cota de dano foi atingida
+            if (accumDamage >= minDamage) {
+                System.out.println("\nCRACK! O boneco de palha não resiste e se despedaça!");
+                System.out.println("Aventureiro: É isso aí! Pega isso aqui como recompensa!");
+                player.wonExperience(15); // Dá o XP merecido
+
+                // Desconta a cota, mas mantém o excesso para o próximo boneco
+                accumDamage -= minDamage;
+            }
+
+            if (choice == 1 || choice == 2) ConsoleUtils.pressEnter();
+        }
+    }
+
+
 }

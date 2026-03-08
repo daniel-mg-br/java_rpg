@@ -1,5 +1,6 @@
 package com.javarpg.world;
 import com.javarpg.model.entities.Character;
+import com.javarpg.model.items.*;
 import com.javarpg.utils.ConsoleUtils;
 
 import java.util.Scanner;
@@ -83,5 +84,113 @@ public abstract class Location {
             ConsoleUtils.pressEnter();
             return null;
         }
+    }
+
+    // Menu principal da mochila, acessível para City e Dungeon
+    protected void openBackPack(Character player, Scanner scanner) {
+        while (true) {
+            ConsoleUtils.clearScreen();
+            player.getStatus();
+
+            System.out.println("\n[1] Ver Itens (usar/equipar)");
+            System.out.println("[2] Desequipar um item");
+            System.out.println("[3] Jogar item fora");
+            System.out.println("[0] Fechar mochila");
+            System.out.println("------------------------------------------");
+
+            System.out.print("Sua escolha: ");
+            int choice = scanner.nextInt();
+
+            if (choice == 1) {
+                useItemMenu(player, scanner);
+            }
+            else if (choice == 2) {
+                unequipMenu(player, scanner);
+            }
+            else if (choice == 3) {
+                dropItemMenu(player, scanner);
+            }
+            else if (choice == 0) {
+                System.out.println("Fechando a mochila...");
+                return;
+            }
+            else {
+                System.out.println("Opção inválida!");
+                ConsoleUtils.pressEnter();
+            }
+        }
+    }
+
+    // Sub-menu para equipar/usar itens
+    private void useItemMenu(Character player, Scanner scanner) {
+        System.out.println("\n===== SEUS ITENS =====");
+        if (player.getInventory().isEmpty()) {
+            System.out.println("Sua mochila está vazia!");
+            ConsoleUtils.pressEnter();
+            return;
+        }
+
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            System.out.println("[" + (i+1) + "] " + player.getInventory().get(i).getItemName());
+        }
+        System.out.println("[0] Cancelar");
+        System.out.println("------------------------------------------");
+
+        System.out.print("Sua escolha: ");
+        int chosenItem = scanner.nextInt();
+
+        if (chosenItem > 0 && chosenItem <= player.getInventory().size()) {
+            player.useItem(player.getInventory().get(chosenItem-1));
+            ConsoleUtils.pressEnter();
+        }
+        else System.out.println("Opção inválida!");
+    }
+
+    // Sub-menu para desequipar itens
+    private void unequipMenu(Character player, Scanner scanner) {
+        System.out.println("\n===== DESEQUIPAR =====");
+        System.out.println("[1] Arma");
+        System.out.println("[2] Armadura");
+        System.out.println("[3] Capacete");
+        System.out.println("[0] Cancelar");
+        System.out.println("------------------------------------------");
+
+        System.out.print("Escolha o slot: ");
+        int chosenSlot = scanner.nextInt();
+
+        // Desequipando o item escolhido baseado no tipo dele
+        if (chosenSlot == 1) player.unequipItem(Equipment.Type.WEAPON);
+        else if (chosenSlot == 2) player.unequipItem(Equipment.Type.ARMOR);
+        else if (chosenSlot == 3) player.unequipItem(Equipment.Type.HELMET);
+        
+        if (chosenSlot != 0) ConsoleUtils.pressEnter();
+    }
+
+    // Sub-menu para jogar itens fora
+    private void dropItemMenu(Character player, Scanner scanner) {
+        System.out.println("\n===== JOGAR ITEM FORA =====");
+        if (player.getInventory().isEmpty()) {
+            System.out.println("Sua mochila está vazia!");
+            ConsoleUtils.pressEnter();
+            return;
+        }
+
+        // Listando os itens do inventário
+        for (int i = 0; i < player.getInventory().size(); i++) {
+            System.out.println("[" + (i+1) + "] " + player.getInventory().get(i).getItemName());
+        }
+        System.out.println("[0] Cancelar");
+        System.out.println("------------------------------------------");
+
+        System.out.print("Escolha o que quer jogar fora: ");
+        int chosenDrop = scanner.nextInt();
+
+        // Conferindo se o índice do item é válido
+        if (chosenDrop > 0 && chosenDrop <= player.getInventory().size()) {
+            Item dropItem = player.getInventory().remove(chosenDrop-1);
+            System.out.println("Você jogou " + dropItem.getItemName() + " fora!");
+        }
+        else System.out.println("Item inválido!");
+        ConsoleUtils.pressEnter();
     }
 }
