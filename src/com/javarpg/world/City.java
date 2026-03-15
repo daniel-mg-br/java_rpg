@@ -41,7 +41,8 @@ public class City extends Location {
             System.out.println("[1] Visitar a loja");
             System.out.println("[2] Área de treinamento");
             System.out.println("[3] Descansar na estalagem");
-            System.out.println("[4] Viajar");
+            System.out.println("[4] Abrir mochila");
+            System.out.println("[5] Viajar");
             System.out.println("---------------------------------------");
             System.out.print("Sua escolha:");
             int choice = scanner.nextInt();
@@ -59,7 +60,10 @@ public class City extends Location {
                 System.out.println("Seu HP e " + player.getResourceName() + " foram restaurados!");
                 ConsoleUtils.pressEnter();
             }
-            else if (choice == 4) { // Opção para viajar para outras localidades
+            else if (choice == 4) {
+                openBackPack(player, scanner);
+            }
+            else if (choice == 5) { // Opção para viajar para outras localidades
                 // Chama o sub-menu de viagens
                 Location destination = travelMenu(player, scanner);
 

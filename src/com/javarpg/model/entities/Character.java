@@ -4,6 +4,7 @@ package com.javarpg.model.entities;
 import com.javarpg.model.items.Item;
 import com.javarpg.model.items.Equipment;
 import com.javarpg.model.items.Consumable;
+import com.javarpg.model.quests.*;
 // Importando as estruturas de dados necessárias
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public abstract class Character {
     protected int gold;
 
     // Inventário implementado com uma lista, junto de um variável para controlar o espaço
-    protected List <Item> inventory = new ArrayList<>();
+    protected List <Item> inventory;
     protected int maxInventorySize = 30;
 
     // Itens equipáveis: arma, armadura e capacete
@@ -35,6 +36,9 @@ public abstract class Character {
     // Atributos para buffs temporários em batalhas
     protected int battleDefenseBuff = 0;
     protected int battleAttackBuff = 0;
+
+    // O diário de missões como uma lista de Quests
+    protected List <Quest> questLog;
 
     // Métodos Getter e Setter padrões
     public String getName() {return this.name;}
@@ -89,6 +93,10 @@ public abstract class Character {
         this.setExp(0);                   // Experiência inicial
         this.setNxtLevelXp(100);   // Precisa de 100 exp para subir de nível  
         this.setGold(0);
+
+        // Inicializando a a lista do inventário e a lista de missões
+        this.inventory = new ArrayList<>();
+        this.questLog = new ArrayList<>();
     }
 
     // Métodos para pegar o tipo de MP e o nome da classe
@@ -388,6 +396,37 @@ public abstract class Character {
 
             System.out.println(index + ". " + nome + " (x" + quantidade + ") - Valor: " + preco);
             index++;
+        }
+    }
+
+    // Retorna a lista de missões
+    public List <Quest> getQuestLog() {
+        return this.questLog;
+    }
+
+    // Adiciona uma nova missão ao diário
+    public void addQuest(Quest quest) {
+        this.questLog.add(quest);
+        System.out.println("\nNOVA MISSÃO ACEITA: " + quest.getName());
+    }
+
+    // Método para checar o progresso de todas as missões ativas de uma vez
+    public void updateQuests() {
+        for (Quest quest : this.questLog) {
+            if (!quest.getIsTurnedIn()) {   // Só checa se não tiver sido entregue
+                quest.checkProgress(this);
+            }
+        }
+    }
+
+    // Método para "avisar" as missões de caça que um inimigo morreu
+    public void countKills(String enemyName) {
+        for (Quest quest : this.questLog) {
+            // Verifica se a missão é uma Hunt Quest
+            if (quest instanceof HuntQuest) {
+                // Transforma a quest genérica em uma Hunt Quest para poder usar o registerKill
+                ((HuntQuest) quest).registerKill(enemyName);
+            }
         }
     }
 }

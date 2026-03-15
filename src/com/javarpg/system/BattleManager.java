@@ -51,6 +51,8 @@ public class BattleManager {
 
             player.setGold(player.getGold() + enemy.getGold());
             System.out.println("Você ganhou " + enemy.getGold() + " de ouro!");
+
+            player.countKills(enemy.getName()); // Avisa ao diário de missões que esse monstro morreu 
         } else {
             System.out.println("\nGAME OVER... O " + enemy.getName() + " derrotou você!");
         }
