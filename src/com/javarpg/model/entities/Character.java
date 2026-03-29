@@ -127,6 +127,9 @@ public abstract class Character {
             
             // Só imprime a mensagem se não for silencioso (pegou do chão)
             if (!silent) System.out.println("Você pegou: " + item.getItemName());
+
+            // Contando os items para as side quests
+            this.updateQuests();  
             return true;
         } else {
             if (!silent) System.out.println("Inventário cheio!");
