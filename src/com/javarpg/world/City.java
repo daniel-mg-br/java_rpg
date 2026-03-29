@@ -3,6 +3,7 @@ import com.javarpg.model.entities.Character;
 import com.javarpg.model.entities.Enemy;
 import com.javarpg.model.items.Item;
 import com.javarpg.utils.ConsoleUtils;
+import com.javarpg.model.quests.Quest;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -14,15 +15,24 @@ public class City extends Location {
     // Vitrine da loja da cidade
     private List <Item> shopInventory;
 
+    // Lista de missões da Guilda
+    private List <Quest> questList;
+
     // Construtor da cidade
     public City(String name, String description) {
         super(name, description);
         this.shopInventory = new ArrayList<>(); // Inicializa a lista
+        this.questList = new ArrayList<>();     //Inicializa  as missões
     }
 
     // Método para abastecer a loja no arquivo Main
     public void addShopItem(Item item) {
         this.shopInventory.add(item);
+    }
+
+    // Método para adicionar missões para a Guilda
+    public void addQuestGuild(Quest quest) {
+        this.questList.add(quest);
     }
 
     // Sobrecarga do método entrar: o jogador fica na cidade para escolher o quê fazer
@@ -187,6 +197,10 @@ public class City extends Location {
 
             // Remove da mochila o item que será vendido
             player.getInventory().remove(sellItem);
+
+            // Atualiza a quantidade de itens necessária para alguma missão
+            player.updateQuests();
+            
             // Dá o dinheiro ao jogador
             player.setGold(player.getGold() + sellPrice);
 
@@ -272,5 +286,39 @@ public class City extends Location {
         }
     }
 
+    // Método para visitar a guilda e mostrar o mural de missões para o jogador
+    private void visitGuild(Character player, Scanner scanner) {
+        while (true) {
+            ConsoleUtils.clearScreen();
+            System.out.println("====== GUILDA DE AVENTUREIROS =====");
+            System.out.println("Recepcionista: Bem-vindo(a) à Guilda! Procurando trabalho ou tem algo interessante aí?");
 
+            System.out.println("[1] Ver mural de missões");
+            System.out.println("[2] Entregar missão concluída");
+            System.out.println("[0] Ir embora");
+            System.out.println("------------------------------------------");
+
+            System.out.print("Sua escolha: ");
+            int choice = scanner.nextInt();
+
+            // MURAL DE MISSÕES
+            if (choice == 1) {
+
+            }
+            // ENTREGAR MISSÕES
+            else if (choice == 2) {
+
+            }
+            else if (choice == 0) {
+                System.out.println("Recepcionista: Até a próxima, amigo(a)!");
+                ConsoleUtils.pressEnter();
+                return;
+            }
+            else {
+                System.out.println("Opção inválida!");
+                ConsoleUtils.pressEnter();
+            }
+
+        }
+    }
 }

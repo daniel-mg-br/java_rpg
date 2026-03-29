@@ -188,6 +188,10 @@ public abstract class Location {
         // Conferindo se o índice do item é válido
         if (chosenDrop > 0 && chosenDrop <= player.getInventory().size()) {
             Item dropItem = player.getInventory().remove(chosenDrop-1);
+
+            // Atualizando a quantidade de itens para alguma missão
+            player.updateQuests();
+            
             System.out.println("Você jogou " + dropItem.getItemName() + " fora!");
         }
         else System.out.println("Item inválido!");
