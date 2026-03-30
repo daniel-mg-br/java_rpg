@@ -3,6 +3,7 @@ import com.javarpg.model.entities.Character;
 import com.javarpg.model.entities.Enemy;
 import com.javarpg.model.items.Item;
 import com.javarpg.utils.ConsoleUtils;
+import com.javarpg.model.quests.FetchQuest;
 import com.javarpg.model.quests.Quest;
 
 import java.util.List;
@@ -50,9 +51,10 @@ public class City extends Location {
             System.out.println("\n O que deseja fazer agora?");
             System.out.println("[1] Visitar a loja");
             System.out.println("[2] Área de treinamento");
-            System.out.println("[3] Descansar na estalagem");
-            System.out.println("[4] Abrir mochila");
-            System.out.println("[5] Viajar");
+            System.out.println("[3] Guilda dos Aventureiros");
+            System.out.println("[4] Descansar na estalagem");
+            System.out.println("[5] Abrir mochila");
+            System.out.println("[6] Viajar");
             System.out.println("---------------------------------------");
             System.out.print("Sua escolha:");
             int choice = scanner.nextInt();
@@ -63,7 +65,10 @@ public class City extends Location {
             else if (choice == 2) { // Treino para ganho de XP mínimo
                 trainingArea(player, scanner);
             }
-            else if (choice == 3) { // Local para recuperar vida e MP
+            else if (choice == 3) { // Visita a guilda em busca de missões
+                visitGuild(player, scanner);
+            }
+            else if (choice == 4) { // Local para recuperar vida e MP
                 System.out.println("Você aluga um quarto aconchegante e descansa profundamente...");
                 player.heal(player.getMaxHealth());
                 player.restoreMp(player.getMaxMp());
@@ -303,11 +308,11 @@ public class City extends Location {
 
             // MURAL DE MISSÕES
             if (choice == 1) {
-
+                questBoardMenu(player, scanner);
             }
             // ENTREGAR MISSÕES
             else if (choice == 2) {
-
+                turnInQuestMenu(player, scanner);
             }
             else if (choice == 0) {
                 System.out.println("Recepcionista: Até a próxima, amigo(a)!");
@@ -318,7 +323,97 @@ public class City extends Location {
                 System.out.println("Opção inválida!");
                 ConsoleUtils.pressEnter();
             }
-
         }
+    }
+
+    // Método auxiliar para mostrar o quadro de missões
+    private void questBoardMenu(Character player, Scanner scanner) {
+        System.out.println("===== MURAL DE MISSÕES =====");
+        if (questList.isEmpty()) {
+            System.out.println("Recepcionista: Foi mal chefe, estamos meio parados agora!");
+            ConsoleUtils.pressEnter();
+            return;
+        }
+
+        // Imprime os detalhes das missões
+        for (int i = 0; i < questList.size(); i++) {
+            Quest q = questList.get(i);
+            System.out.println("[ " + (i+1) + " ] " + q.getName() + " (Prize: " + q.getGoldReward() + " Ouro | " + q.getXpReward() + " XP)");
+            System.out.println("Objetivo: " + q.getObjectiveString());
+        }
+        System.out.println("[0] Cancelar");
+        System.out.println("------------------------------------------");
+
+        System.out.printf("Escolha uma missão: ");
+        int questChoice = scanner.nextInt();
+
+        if (questChoice > 0 && questChoice <= questList.size()) {
+            // Tira a missão do mural e coloca no diário do jogador
+            Quest acceptedQuest = questList.remove(questChoice-1);
+            player.addQuest(acceptedQuest);
+            System.out.println("Recepcionista: Muito bem! Boa sorte lá fora!");
+        }
+        else if (questChoice != 0) {
+            System.out.println("Opção inválida!");
+        }
+        ConsoleUtils.pressEnter();
+    }
+
+    // Método auxiliar para o jogador encerrar os dois tipos de missões
+    private void turnInQuestMenu(Character player, Scanner scanner) {
+        System.out.println("===== SUAS MISSÕES CONCLUÍDAS =====");
+        List <Quest> readyQuests = new ArrayList<>();
+
+        // Lista apenas as missões que estão prontas
+        for (Quest q : player.getQuestLog()) {
+            if (q.getIsComplete() && !q.getIsTurnedIn()) {
+                readyQuests.add(q);
+                System.out.println("[ " + readyQuests.size() + " ] " + q.getName());
+            }
+        }
+
+        if (readyQuests.isEmpty()) {
+            System.out.println("Você não tem nenhuma missão pronta!");
+            ConsoleUtils.pressEnter();
+            return;
+        }
+
+        System.out.println("[0] Cancelar");
+        System.out.println("------------------------------------------");
+
+        System.out.print("Qual missão deseja entregar? ");
+        int turnInChoice = scanner.nextInt();
+
+        if (turnInChoice > 0 && turnInChoice <= questList.size()) {
+            Quest q = readyQuests.get(turnInChoice-1);
+
+            // Se for uma missão de coletar itens, eles são confiscados
+            if (q instanceof FetchQuest) {
+                FetchQuest fq = (FetchQuest) q;
+                int itensToRemove = fq.getRequiredAmount();
+
+                // Remove os itens da mochila de trás para frente
+                for (int i = player.getInventory().size()-1; i >= 0; i--) {
+                    if (player.getInventory().get(i).getItemName().equalsIgnoreCase(fq.getTargetItemName())) {
+                        player.getInventory().remove(i);
+                        itensToRemove--;
+                        if (itensToRemove == 0) break;  // Cancela quando pegar todos
+                    }
+                }
+                System.out.println("Você entregou os itens ao Recepcionista");
+            }
+
+            // Entrega as recompensas
+            q.setIsTurnedIn(true);
+            player.setGold(player.getGold() + q.getGoldReward());
+            player.wonExperience(q.getXpReward());
+            System.out.println("MISSÃO ENTREGUE: " + q.getName());
+            System.out.println("Você recebeu: " + q.getGoldReward() + " moedas e " + q.getXpReward() + " de XP!");
+            
+        }
+        else if (turnInChoice != 0) {
+            System.out.println("Opção inválida!");
+        }
+        ConsoleUtils.pressEnter();
     }
 }
